@@ -1,0 +1,66 @@
+{
+	"name": "pipeline3",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://uscold.atlassian.net/rest/agile/1.0/board/31/sprint/",
+					"method": "GET",
+					"authentication": {
+						"type": "Basic",
+						"username": "aboinepalli@uscold.com",
+						"password": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Web1').output.values",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@and(\ngreaterOrEquals(\nitem().startDate,\npipeline().parameters.fromdate\n),\nlessOrEquals(\nitem().endDate,\npipeline().parameters.todate\n)\n)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"fromdate": {
+				"type": "string"
+			},
+			"todate": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-07-21T18:42:20Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

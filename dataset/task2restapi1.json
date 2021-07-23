@@ -1,0 +1,13 @@
+{
+	"name": "task2restapi1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "task2restservice1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

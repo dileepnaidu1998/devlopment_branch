@@ -1,0 +1,221 @@
+{
+	"name": "DelimitedText1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "my_blob1",
+				"container": "jiratosnowflakecontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "contents",
+				"type": "String"
+			},
+			{
+				"name": "contents_id",
+				"type": "String"
+			},
+			{
+				"name": "contents_key",
+				"type": "String"
+			},
+			{
+				"name": "contents_hidden",
+				"type": "String"
+			},
+			{
+				"name": "contents_typeName",
+				"type": "String"
+			},
+			{
+				"name": "contents_typeId",
+				"type": "String"
+			},
+			{
+				"name": "contents_summary",
+				"type": "String"
+			},
+			{
+				"name": "contents_typeUrl",
+				"type": "String"
+			},
+			{
+				"name": "contents_priorityUrl",
+				"type": "String"
+			},
+			{
+				"name": "contents_priorityName",
+				"type": "String"
+			},
+			{
+				"name": "contents_done",
+				"type": "String"
+			},
+			{
+				"name": "contents_assignee",
+				"type": "String"
+			},
+			{
+				"name": "contents_assigneeKey",
+				"type": "String"
+			},
+			{
+				"name": "contents_assigneeAccountId",
+				"type": "String"
+			},
+			{
+				"name": "contents_assigneeName",
+				"type": "String"
+			},
+			{
+				"name": "contents_avatarUrl",
+				"type": "String"
+			},
+			{
+				"name": "contents_hasCustomUserAvatar",
+				"type": "String"
+			},
+			{
+				"name": "contents_flagged",
+				"type": "String"
+			},
+			{
+				"name": "contents_epic",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_id",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_label",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_editable",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_renderer",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_epicKey",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_epicColor",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_text",
+				"type": "String"
+			},
+			{
+				"name": "contents_epicField_canRemoveEpic",
+				"type": "String"
+			},
+			{
+				"name": "contents_currentEstimateStatistic_statFieldId",
+				"type": "String"
+			},
+			{
+				"name": "contents_currentEstimateStatistic_statFieldValue_value",
+				"type": "String"
+			},
+			{
+				"name": "contents_estimateStatisticRequired",
+				"type": "String"
+			},
+			{
+				"name": "contents_estimateStatistic_statFieldId",
+				"type": "String"
+			},
+			{
+				"name": "contents_estimateStatistic_statFieldValue_value",
+				"type": "String"
+			},
+			{
+				"name": "contents_trackingStatistic_statFieldId",
+				"type": "String"
+			},
+			{
+				"name": "contents_trackingStatistic_statFieldValue_value",
+				"type": "String"
+			},
+			{
+				"name": "contents_trackingStatistic_statFieldValue_text",
+				"type": "String"
+			},
+			{
+				"name": "contents_statusId",
+				"type": "String"
+			},
+			{
+				"name": "contents_statusName",
+				"type": "String"
+			},
+			{
+				"name": "contents_statusUrl",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_id",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_name",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_description",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_iconUrl",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_statusCategory_id",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_statusCategory_key",
+				"type": "String"
+			},
+			{
+				"name": "contents_status_statusCategory_colorName",
+				"type": "String"
+			},
+			{
+				"name": "contents_fixVersions",
+				"type": "String"
+			},
+			{
+				"name": "contents_projectId",
+				"type": "String"
+			},
+			{
+				"name": "contents_linkedPagesCount_sprint_id",
+				"type": "String"
+			},
+			{
+				"name": "sprint_id",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

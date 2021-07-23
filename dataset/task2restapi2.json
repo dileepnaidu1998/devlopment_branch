@@ -1,0 +1,24 @@
+{
+	"name": "task2restapi2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "task2restservice2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"id": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('/rest/agile/1.0/board/',dataset().id,'/sprint')",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

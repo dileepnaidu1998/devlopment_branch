@@ -1,0 +1,27 @@
+{
+	"name": "jiratosnowflakesrestapi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "jiratosnowflakeslinkedservice",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"boardid": {
+				"type": "string"
+			},
+			"sprintid": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('/rest/greenhopper/latest/rapid/charts/sprintreport?rapidViewId=',dataset().boardid,'&sprintId=',dataset().sprintid)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

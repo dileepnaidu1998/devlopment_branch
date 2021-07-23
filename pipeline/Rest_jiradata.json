@@ -1,0 +1,984 @@
+{
+	"name": "Rest_jiradata",
+	"properties": {
+		"activities": [
+			{
+				"name": "Rest_jira_dataconnector",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET"
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "jiratosnowflakesrestapi",
+						"type": "DatasetReference",
+						"parameters": {
+							"boardid": "185",
+							"sprintid": "291"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Jira_jsondata",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Azure Function1",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "Rest_jira_dataconnector",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "HttpTrigger1",
+					"method": "POST",
+					"body": {
+						"name": "azure"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunction1",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sprint",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Azure Function1",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SnowflakeSink",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand"
+						}
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "scm-releases"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "sprint",
+						"type": "DatasetReference",
+						"parameters": {
+							"sprintid": "4"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SnowflakeTable2",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "sprint_issues1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "sprint",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SnowflakeSink",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand"
+						}
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "scm-releases"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "contents",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_key",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_KEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_hidden",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_HIDDEN",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_typeName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_TYPENAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_typeId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_TYPEID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_summary",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_SUMMARY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_typeUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_TYPEURL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_priorityUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_PRIORITYURL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_priorityName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_PRIORITYNAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_done",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_DONE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_assignee",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ASSIGNEE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_assigneeKey",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ASSIGNEEKEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_assigneeAccountId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ASSIGNEEACCOUNTID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_assigneeName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ASSIGNEENAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_avatarUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_AVATARURL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_hasCustomUserAvatar",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_HASCUSTOMUSERAVATAR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_flagged",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_FLAGGED",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epic",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPIC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_label",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_LABEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_editable",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_EDITABLE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_renderer",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_RENDERER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_epicKey",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_EPICKEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_epicColor",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_EPICCOLOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_TEXT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_epicField_canRemoveEpic",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_EPICFIELD_CANREMOVEEPIC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_currentEstimateStatistic_statFieldId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_CURRENTESTIMATESTATISTIC_STATFIELDID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_currentEstimateStatistic_statFieldValue_value",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_CURRENTESTIMATESTATISTIC_STATFIELDVALUE_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_estimateStatisticRequired",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ESTIMATESTATISTICREQUIRED",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_estimateStatistic_statFieldId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ESTIMATESTATISTIC_STATFIELDID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_estimateStatistic_statFieldValue_value",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_ESTIMATESTATISTIC_STATFIELDVALUE_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_trackingStatistic_statFieldId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_TRACKINGSTATISTIC_STATFIELDID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_trackingStatistic_statFieldValue_value",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_TRACKINGSTATISTIC_STATFIELDVALUE_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_trackingStatistic_statFieldValue_text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_TRACKINGSTATISTIC_STATFIELDVALUE_TEXT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_statusId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUSID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_statusName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUSNAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_statusUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUSURL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_description",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_iconUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_ICONURL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_statusCategory_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_STATUSCATEGORY_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_statusCategory_key",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_STATUSCATEGORY_KEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_status_statusCategory_colorName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_STATUS_STATUSCATEGORY_COLORNAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_fixVersions",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_FIXVERSIONS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_projectId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_PROJECTID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "contents_linkedPagesCount_sprint_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS_LINKEDPAGESCOUNT_SPRINT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "sprint_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SPRINT_ID",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "sprint_issues1",
+						"type": "DatasetReference",
+						"parameters": {
+							"sprintid": "440"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SnowflakeTable3",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "sprint_issues2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "sprint",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SnowflakeSink",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand"
+						}
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "scm-releases"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "completedIssuesInitialEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "COMPLETEDISSUESINITIALESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "completedIssuesEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "COMPLETEDISSUESESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "issuesNotCompletedInitialEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ISSUESNOTCOMPLETEDINITIALESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "issuesNotCompletedEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ISSUESNOTCOMPLETEDESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "allIssuesEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ALLISSUESESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "puntedIssuesInitialEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PUNTEDISSUESINITIALESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "puntedIssuesEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PUNTEDISSUESESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "issuesCompletedInAnotherSprintInitialEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ISSUESCOMPLETEDINANOTHERSPRINTINITIALESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "issuesCompletedInAnotherSprintEstimateSum",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ISSUESCOMPLETEDINANOTHERSPRINTESTIMATESUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "sprint_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SPRINT_ID",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "sprint_issues2",
+						"type": "DatasetReference",
+						"parameters": {
+							"sprintid": "440"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SnowflakeTable4",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "sprint_issues3",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "sprint",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SnowflakeSink",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand"
+						}
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "scm-releases"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "contents",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CONTENTS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "keysAdded",
+									"type": "String"
+								},
+								"sink": {
+									"name": "KEYSADDED",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "keysValue",
+									"type": "String"
+								},
+								"sink": {
+									"name": "KEYSVALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "sprint_id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SPRINT_ID",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "sprint_issues3",
+						"type": "DatasetReference",
+						"parameters": {
+							"sprintid": "440"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SnowflakeTable5",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "task1"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-07-22T15:09:33Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

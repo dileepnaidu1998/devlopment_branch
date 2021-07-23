@@ -1,0 +1,24 @@
+{
+	"name": "RestResource2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestService4",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"boardUrl": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('/rest/agile/1.0/board/',dataset().boardUrl,'/sprint/')",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

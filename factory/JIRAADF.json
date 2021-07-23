@@ -1,0 +1,9 @@
+{
+	"name": "JIRAADF",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "cfa64c16-e98a-4118-8a22-a6097ca1dc4d",
+		"tenantId": "e003853e-52e3-495e-b8d9-4857ec876399"
+	}
+}

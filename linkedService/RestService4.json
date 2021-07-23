@@ -1,0 +1,15 @@
+{
+	"name": "RestService4",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://uscold.atlassian.net/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "sasikala@edvenswa.in",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkpJUkFBREZfZmE0Y2I0MzYtMzI3ZC00MDU4LTk2OTEtMWY5NzBlMDQxY2UzIg0KfQ=="
+		}
+	}
+}
